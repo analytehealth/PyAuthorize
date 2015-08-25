@@ -52,11 +52,12 @@ class PaymentProcessor(object):
     ...         x_test_request=True)
     """
 
-    def __init__(self, x_login, x_tran_key, x_test_request=True):
+    def __init__(self, x_login, x_tran_key, x_test_request=True, timeout=120):
         # Configuration
         self.post_url = 'https://secure.authorize.net/gateway/transact.dll'
         self.x_test_request = x_test_request
         self.urllib = urllib2
+        self.timeout = timeout
         self.is_avs_required = False
         self.is_ccv_required = False
         self.configuration = {
@@ -164,8 +165,7 @@ class PaymentProcessor(object):
         else:
             request = self.urllib.Request(url=self.post_url,
                     data=encoded_post_data)
-            # Times out after 90 seconds
-            response = self.urllib.urlopen(request, timeout=90)
+            response = self.urllib.urlopen(request, timeout=self.timeout)
             response_string = response.read()
 
         response_list = response_string.split(
